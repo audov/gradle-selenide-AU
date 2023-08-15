@@ -15,4 +15,3 @@ install:
 
 build_script:
   - ./gradlew test --info -Dselenide.headless=true
-  - -Dselenide.browser=firefox
