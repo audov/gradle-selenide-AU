@@ -39,10 +39,12 @@ public class CardDeliveryTest {
         $(".notification__title")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Успешно!"));
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + currentDate));
     }
 
     @Test
-    void dateEarlier3Days() {
+    void dateEarlier3DaysPlus() {
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Хабаровск");
         String currentDate = generateDate(2, "dd.MM.yyyy");
@@ -53,7 +55,7 @@ public class CardDeliveryTest {
         $("[data-test-id='phone'] input").setValue("+79109643232");
         $("[data-test-id='agreement']").click();
         $("button.button").click();
-        $("[data-test-id='date'] .input__sub")
+        $("[data-test-id='date'].input_invalid .input__sub")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Заказ на выбранную дату невозможен"));
     }
@@ -95,7 +97,7 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void agreementUncheckedFailed() {
+    void agreementBoxUncheckedFailed() {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Хабаровск");
@@ -112,7 +114,7 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void cityDateFromDroppedList() {
+    void cityAndDateFromDroppedList() {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").sendKeys("Ха");
@@ -126,6 +128,9 @@ public class CardDeliveryTest {
         $(".notification__title")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Успешно!"));
+        String currentDate = generateDate(4, "dd.MM.yyyy");
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + currentDate));
     }
 }
 
