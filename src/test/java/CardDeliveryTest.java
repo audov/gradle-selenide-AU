@@ -28,7 +28,7 @@ public class CardDeliveryTest {
     void formCompleteSuccess() {
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Хабаровск");
-        String currentDate = generateDate(4, "dd.MM.yyyy");
+        String currentDate = generateDate(3, "dd.MM.yyyy");
         $("[data-test-id='date'] input")
                 .sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
         $("[data-test-id='date'] input").sendKeys(currentDate);
@@ -55,7 +55,7 @@ public class CardDeliveryTest {
         $("[data-test-id='phone'] input").setValue("+79109643232");
         $("[data-test-id='agreement']").click();
         $("button.button").click();
-        $("[data-test-id='date'].input_invalid .input__sub")
+        $("[data-test-id='date'] .input_invalid .input__sub")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Заказ на выбранную дату невозможен"));
     }
@@ -65,7 +65,7 @@ public class CardDeliveryTest {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Хабаровск");
-        String currentDate = generateDate(4, "dd.MM.yyyy");
+        String currentDate = generateDate(3, "dd.MM.yyyy");
         $("[data-test-id='date'] input")
                 .sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
         $("[data-test-id='date'] input").sendKeys(currentDate);
@@ -73,7 +73,7 @@ public class CardDeliveryTest {
         $("[data-test-id='phone'] input").setValue("+79109643232");
         $("[data-test-id='agreement']").click();
         $("button.button").click();
-        $("[data-test-id='name'] .input__sub")
+        $("[data-test-id='name'].input_invalid .input__sub")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
@@ -83,7 +83,7 @@ public class CardDeliveryTest {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Хабаровск");
-        String currentDate = generateDate(4, "dd.MM.yyyy");
+        String currentDate = generateDate(3, "dd.MM.yyyy");
         $("[data-test-id='date'] input")
                 .sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
         $("[data-test-id='date'] input").sendKeys(currentDate);
@@ -91,7 +91,7 @@ public class CardDeliveryTest {
         $("[data-test-id='phone'] input").setValue("79109643232");
         $("[data-test-id='agreement']").click();
         $("button.button").click();
-        $("[data-test-id='phone'] .input__sub")
+        $("[data-test-id='phone'].input_invalid .input__sub")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
     }
@@ -101,7 +101,7 @@ public class CardDeliveryTest {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Хабаровск");
-        String currentDate = generateDate(4, "dd.MM.yyyy");
+        String currentDate = generateDate(3, "dd.MM.yyyy");
         $("[data-test-id='date'] input")
                 .sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
         $("[data-test-id='date'] input").sendKeys(currentDate);
@@ -114,13 +114,20 @@ public class CardDeliveryTest {
     }
 
     @Test
-    void cityAndDateFromDroppedList() {
+    void cityAndDateFromDroppedListAdd3() {
 
         open("http://localhost:9999");
         $("[data-test-id='city'] input").sendKeys("Ха");
         $$(".menu-item__control").findBy(text("Хабаровск")).click();
         $(".icon-button__text").click();
-        $$("[data-day]").findBy(text("19")).click();
+        int addDays = 3;
+        String currentMonth = generateDate(addDays, "M");
+        String DatePlus3 = generateDate(addDays, "M");
+        String plannedDay = generateDate(addDays, "d");
+        if (!currentMonth.equals(DatePlus3)) {
+            $(".calendar__arrow").click();
+        }
+        $$("[data-day]").findBy(text(plannedDay)).click();
         $("[data-test-id='name'] input").setValue("Воронина Елена");
         $("[data-test-id='phone'] input").setValue("+79109643232");
         $("[data-test-id='agreement']").click();
@@ -128,9 +135,33 @@ public class CardDeliveryTest {
         $(".notification__title")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.exactText("Успешно!"));
-        String currentDate = generateDate(4, "dd.MM.yyyy");
         $(".notification__content")
-                .shouldHave(Condition.text("Встреча успешно забронирована на " + currentDate));
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + plannedDay));
+    }
+
+    @Test
+    void cityAndDateFromDroppedListAdd7() {
+
+        open("http://localhost:9999");
+        $("[data-test-id='city'] input").sendKeys("Ха");
+        $$(".menu-item__control").findBy(text("Хабаровск")).click();
+        $(".icon-button__text").click();
+        int addDays = 7;
+        String currentMonth = generateDate(addDays, "M");
+        String DatePlus3 = generateDate(addDays, "M");
+        String plannedDay = generateDate(addDays, "d");
+        if (!currentMonth.equals(DatePlus3)) {
+            $(".calendar__arrow").click();
+        }
+        $$("[data-day]").findBy(text(plannedDay)).click();
+        $("[data-test-id='name'] input").setValue("Воронина Елена");
+        $("[data-test-id='phone'] input").setValue("+79109643232");
+        $("[data-test-id='agreement']").click();
+        $("button.button").click();
+        $(".notification__title")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(Condition.exactText("Успешно!"));
+        $(".notification__content")
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + plannedDay));
     }
 }
-
